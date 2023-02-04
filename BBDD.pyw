@@ -1,3 +1,4 @@
+#---------------------Módulos necesarios----------------------------------
 from tkinter import *
 from tkinter import messagebox
 import sqlite3
@@ -5,6 +6,12 @@ import sqlite3
 #---------------------Funciones----------------------------------
 #--------------------Primer Apartado-----------------------------
 
+
+"""
+Esta función pregunta al usuario si desea salir de la aplicación. 
+Si el usuario da afirmativo, se destruye la raíz de la ventana. 
+Esto significa que la ventana de la aplicación se cierra.
+"""
 def Salir():
     
     valorpregunta = messagebox.askokcancel("Salir", "¿Desea salir de la aplicación?") #Para almacenar el valor true o false
@@ -12,6 +19,15 @@ def Salir():
     if valorpregunta==True: 
         raiz.destroy()
 
+
+"""
+Esta función se encarga de conectar a una base de datos y crear una tabla si no existe. 
+Primero, crea una conexión a la base de datos con la función "sqlite3.connect()". 
+Luego, crea un cursor con el que se puede ejecutar comandos de SQL. 
+Después, intenta crear una tabla con la función "miCursor.execute()". 
+Si la tabla ya existe, se mostrará un mensaje de advertencia con la función "messagebox.showwarning()". 
+Si la tabla se crea correctamente, se mostrará un mensaje de información con la función "messagebox.showinfo()".
+"""
 def Connectar():
     #Creacion de la base de datos
     miConexion = sqlite3.connect("Usuarios")
@@ -34,10 +50,17 @@ def Connectar():
     except sqlite3.OperationalError:
 
         messagebox.showwarning("¡Atención!","La BBDD ya existe")
-       
+
+
 #-------------Segundo Apartado-----------------------------------------------
 
 
+"""
+La función Borrar_campos() es una función que se usa para borrar los campos de un formulario. 
+Esta función establece los campos de texto (textoId, textoNombre, textoPassword, textoApellido y textoDireccion) en cadenas vacías 
+y el cuadro de comentarios (cuadroComentarios) se borra desde el primer carácter hasta el final (1.0, END). 
+Esta función se usa para limpiar los campos de un formulario antes de ingresar nuevos datos.
+"""
 def Borrar_campos():
 
     textoId.set("")
@@ -48,7 +71,16 @@ def Borrar_campos():
     #Para borrar el apartado comentarios
     cuadroComentarios.delete(1.0, END) #Desde el primer caracter hasta el final
 
+
 #-----------------Tercer Apartado------------------------------------------------
+
+
+"""
+Esta función se encarga de crear una conexión con la base de datos "Usuarios" utilizando el módulo sqlite3. 
+Luego, el cursor es usado para ejecutar la sentencia INSERT INTO, la cual inserta los datos recogidos de los 
+campos de la interfaz de usuario. 
+Por último, se utiliza el método commit para confirmar la inserción de los datos y mostrar un mensaje de éxito.
+"""
 def Crear():
     miConexion = sqlite3.connect("Usuarios")
 
@@ -58,19 +90,29 @@ def Crear():
 
     miCursor.execute("INSERT INTO DATOUSUARIOS VALUES(NULL,?,?,?,?,?)",(datos)) #Evita injeccion sql, un interrogante por cada campo
     
-    """ 
-    miCursor.execute("INSERT INTO DATOUSUARIOS VALUES(NULL,'" + textoNombre.get() + 
-        "','" + textoPassword.get() +
-        "','" + textoApellido.get() +
-        "','" + textoDireccion.get() +
-        "','" + cuadroComentarios.get("1.0",END) + "')")
-    """
-    
-
     miConexion.commit()
 
     messagebox.showinfo("BBDD","Registro insertado con éxito")
 
+
+"""
+Esta función lee los datos de una base de datos de usuarios. 
+Utiliza la librería sqlite3 para conectarse a la base de datos 
+"Usuarios" y crea un cursor para ejecutar una consulta SQL.
+
+La consulta selecciona todos los campos de la tabla "DATOUSUARIOS" 
+donde el campo "ID" coincide con el valor almacenado en la variable 
+"textoId". 
+
+La consulta devuelve una lista con los resultados y los asigna 
+a la variable "elusuario".
+
+Luego, se recorre la lista en un bucle "for" y se asignan los valores
+de cada campo a las variables de texto correspondientes. 
+
+Finalmente, se guardan los cambios en la base de datos mediante 
+la función "miConexion.commit()".
+"""
 def Leer():
 
     miConexion = sqlite3.connect("Usuarios")
@@ -92,22 +134,19 @@ def Leer():
 
     miConexion.commit()
 
+
+"""
+El código realiza una actualización en una base de datos relacional mediante el uso de la librería sqlite3. 
+Esta función permite conectar con una base de datos llamada “Usuarios” y un cursor para interactuar con ella.
+Los datos que se van a actualizar se recogen del texto de los cuadros de texto y se almacenan en una variable.
+Después se realiza la consulta de actualización con los datos recogidos, donde se usan interrogantes para evitar la inyección SQL.
+Por último se realiza el commit y se muestra un mensaje de confirmación de la actualización.
+"""
 def Actualizar():
 
     miConexion = sqlite3.connect("Usuarios")
 
     miCursor = miConexion.cursor()
-
-    datos = textoNombre.get(),textoPassword.get(),textoApellido.get(),textoDireccion.get(),cuadroComentarios.get("1.0",END) #Variable donde se almacenan los datos recogidos
-
-    """     
-        miCursor.execute("UPDATE DATOUSUARIOS SET NOMBRE_USUARIO='" + textoNombre.get() +
-        "', PASSWORD='" + textoPassword.get() +
-        "', APELLIDO='" + textoApellido.get() +
-        "', DIRECCION='" + textoDireccion.get() +
-        "', COMENTARIOS='" + cuadroComentarios.get("1.0",END) +
-        "' WHERE ID=" + textoId.get()) 
-    """
 
     datos = textoNombre.get(),textoPassword.get(),textoApellido.get(),textoDireccion.get(),cuadroComentarios.get("1.0",END) #Variable donde se almacenan los datos recogidos
 
@@ -119,7 +158,18 @@ def Actualizar():
     messagebox.showinfo("BBDD","Registro actualizado con éxito")
 
 
-def Borrar():
+"""
+Este código define una función llamada Borrar_Usuario(). 
+La función se conecta a una base de datos llamada Usuarios usando el módulo sqlite3. 
+Luego, crea un cursor para ejecutar una sentencia SQL. 
+
+La sentencia SQL se usa para eliminar un registro específico en la tabla DATOUSUARIOS 
+basado en el valor recibido de la variable textoId. 
+
+Por último, la función hace un commit de la operación de eliminación y muestra un 
+mensaje de confirmación de que el registro se ha eliminado con éxito.
+"""
+def Borrar_Usuario():
     
     miConexion = sqlite3.connect("Usuarios")
 
@@ -131,13 +181,17 @@ def Borrar():
 
     messagebox.showinfo("BBDD","Registro eliminado con éxito")
 
+
 #--------------------------Apartado 4---------------------------------------
+
 
 def Licencia():
     messagebox.showwarning("Esta licencia pertenece Angel Moreno")
 
+
 def Acercade():
     messagebox.showinfo("BBDD","Creada por Angel Moreno")
+
 
 #----------------------Inicio interfaz gráfica--------------------------
 
@@ -165,7 +219,7 @@ crudMenu=Menu(barraMenu,tearoff = 0)
 crudMenu.add_command(label="Crear",command=Crear)
 crudMenu.add_command(label="Leer",command=Leer)
 crudMenu.add_command(label="Actualizar",command=Actualizar)
-crudMenu.add_command(label="Borrar",command=Borrar)
+crudMenu.add_command(label="Borrar",command=Borrar_Usuario)
 
 ayudaMenu=Menu(barraMenu,tearoff = 0)
 ayudaMenu.add_command(label="Licencia",command=Licencia)
